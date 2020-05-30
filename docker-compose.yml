@@ -1,9 +1,9 @@
 version: "2"
 
 services:
-  uwsgi-alpine:
-    build: ./uwsgi-gevent-alpine
-    image: uwsgi-gevent:alpine
+  uwsgi-buster:
+    build: ./uwsgi-gevent-buster
+    image: uwsgi-gevent:buster
     privileged: true
     restart: always
     volumes:
@@ -13,48 +13,22 @@ services:
     environment:
       - LOG_LEVEL=DEBUG
       - PROCESSES=2
-      - GEVENT=1
-      - GEVENT_NUMS=100
-    entrypoint:
-      - sh
-      - -c
-      - "/root/entrypoint.sh"
-
-  uwsgi-slim:
-    build: ./uwsgi-gevent-slim
-    image: uwsgi-gevent:slim
-    privileged: true
-    restart: always
-    volumes:
-      - ./src:/root
-    ports:
-      - 10081:80
-    environment:
-      - LOG_LEVEL=DEBUG
-      - PROCESSES=2
-      - GEVENT=1
-      - GEVENT_NUMS=100
-    entrypoint:
-      - sh
-      - -c
-      - "/root/entrypoint.sh"
-
-  uwsgi-buster:
-    build: ./uwsgi-gevent-buster
-    image: uwsgi-gevent:buster
-    privileged: true
-    restart: always
-    volumes:
-      - ./src:/root
-    ports:
-      - 10082:80
-    environment:
-      - LOG_LEVEL=DEBUG
-      - PROCESSES=2
       - THREADS=10
       - GEVENT=0
-      - GEVENT_NUMS=100
+      - GEVENT_NUMS=5
+      - AWS_ACCESS_KEY_ID=test_key
+      - AWS_SECRET_ACCESS_KEY=test_secret
+      - ENV=DEV
+      - DYNAMODB_TABLE=ut_table
     entrypoint:
       - sh
       - -c
-      - "/root/entrypoint.sh"
+      - "/root/entrypoint_ut.sh"
+
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    hostname: dynamodb-local
+    privileged: true
+    restart: always
+    ports:
+      - 18000:8000
