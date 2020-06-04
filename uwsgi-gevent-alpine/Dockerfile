@@ -8,7 +8,7 @@ RUN apk update && apk add \
     libffi-dev \
     bash \
     && pip install --upgrade pip \
-    && pip install --no-cache-dir uwsgi gevent flask boto3\
+    && pip install --no-cache-dir uwsgi gevent flask boto3 pytest simplejson\
     && apk del \
     build-base \
     libffi-dev \

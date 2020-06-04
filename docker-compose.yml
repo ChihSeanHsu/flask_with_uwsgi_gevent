@@ -14,21 +14,30 @@ services:
       - LOG_LEVEL=DEBUG
       - PROCESSES=2
       - THREADS=10
-      - GEVENT=0
-      - GEVENT_NUMS=5
+      - GEVENT=1
+      - GEVENT_NUMS=100
       - AWS_ACCESS_KEY_ID=test_key
       - AWS_SECRET_ACCESS_KEY=test_secret
-      - ENV=DEV
+      - ENV=LOCAL
       - DYNAMODB_TABLE=ut_table
     entrypoint:
       - sh
       - -c
       - "/root/entrypoint_ut.sh"
+    ulimits:
+      nofile:
+        soft: 98304
+        hard: 98304
+
 
   dynamodb-local:
     image: amazon/dynamodb-local:latest
     hostname: dynamodb-local
     privileged: true
     restart: always
+    environment:
+      - ./Djava.library.path=./DynamoDBLocal_lib
+    working_dir: /home/dynamodblocal
+    command: ["-jar", "DynamoDBLocal.jar", "-delayTransientStatuses"]
     ports:
       - 18000:8000
